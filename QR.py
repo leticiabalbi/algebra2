@@ -2,35 +2,31 @@ import numpy as np
 import math
 def matrizOrtogonal(A,i,j):
     U = np.identity(len(A))
-    U[i][i] = A[j][j]/(math.sqrt(A[j][j]**2 + A[i][j]**2))
+    U[i][i] = A[0][0]/(math.sqrt(A[0][0]**2 + A[i][j]**2))
     U[j][j] = U[i][i]
-    U[j][i] = A[i][j]/(math.sqrt(A[j][j]**2 + A[i][j]**2))
+    U[j][i] = A[i][j]/(math.sqrt(A[0][0]**2 + A[i][j]**2))
     U[i][j] =  -U[j][i]
     return U
 
-def maiorElemento(A):
-    elementos = np.zeros((len(A)**2-len(A))//2)
-    aux = 0
-    for i in range(len(A)):
-        for j in range(len(A)):
-            if i>j:
-                elementos[aux] = A[i][j]
-                aux= aux+1
-    return elementos.max()
+def maiorElemento(A, tam):
+    for i in range(1,tam):
+    	for j in range(i):
+    		if abs(A[i][j]) > 0.0001:
+    			return 1
+    return 0
 
-def QR(A,niter=1000,minimo = 0.000001):
+def QR(A,tam):
     cont = 0
-    Er = minimo+1
-    while Er> minimo and cont<niter:
-        R = np.identity(len(A))
-        Q = np.identity(len(A))
-        for i in range(len(A)):
-            for j in range(len(A)):
-                if i>j and A[i][j]!=0:
-                    R = R.dot(matrizOrtogonal(A,i,j))
-                    Q = Q.dot(matrizOrtogonal(A,i,j).transpose())
-        R = R.dot(A)
-        A = R.dot(Q)
-        Er = maiorElemento(A)
+    while maiorElemento(A,tam) and cont<1000:
+        Q = np.identity(tam)
+        for i in range(1,tam):
+            for j in range(i):
+                if A[i][j]!=0:
+                    U = matrizOrtogonal(A, i, j)
+                    Q = dot(U,Q)
+                    A = dot(U,A)
+        
+       	Q = Q.T
+       	A = dot(A,Q)
         cont+=1
     return [A[i][i] for i in range(len(A))]
