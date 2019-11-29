@@ -11,12 +11,10 @@ def LeverrierFaddeev(A):
     B = array(A)
     P = zeros(tam+1)
     P[0] = 1
-    P[1] = traco(B)
+    P[1] = -traco(B)
     for i in range(2,tam+1):
-        B = dot(A, B - P[i-1]*identity(tam))
-        print(A.dot(B-P[i-1]*identity(tam)))
-        print()
-        P[i] = traco(B/i)
+        B = dot(A, B + P[i-1]*identity(tam))
+        P[i] = -traco(B/i)
     return P[::-1]
 	
 def matrizOrtogonal(A,i,j):
@@ -52,3 +50,4 @@ def QR(A):
     return [A[i][i] for i in range(tam)]
 
 
+git
