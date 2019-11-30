@@ -9,19 +9,44 @@ def traco(A):
 def LeverrierFaddeev(A):
     tam = len(A)
     B = array(A)
-    P = zeros(tam+1)
-    P[0] = 1
-    P[1] = -traco(B)
+    S = zeros(((tam-1,tam,tam))) #tensor que guarda as matrizes B
+    Q = zeros(tam+1)
+    Q[0] = 1
+    Q[1] = -traco(B)
     for i in range(2,tam+1):
-        B = dot(A, B + P[i-1]*identity(tam))
-        P[i] = -traco(B/i)
-    return P[::-1]
+        S[i-2] = B + Q[i-1] * identity(tam)
+        B = dot(A, B + Q[i-1]*identity(tam))
+        Q[i] = -traco(B/i)
+    return Q[::-1], S
+
+def autoVetores(A,av): #recebe uma matriz e o vetor dos autovalores
+    tam = len(A)
+    I = identity(tam)
+    U = zeros((tam,tam))
+    V = zeros((tam,tam))
+    B = LeverrierFaddeev(A)[1]
+    indice = 0
+    cont = 0
+    U[0] = I[indice]
+    for b in range(tam-1):
+        B[b] = B[b].T
+    while cont<tam:
+        for i in range(1,tam):
+            U[i] = av[cont] * U[i-1] + B[i-1][indice]
+        if all(U[i]==0):
+            indice += 1
+            U[0] = I[indice]
+            cont = 0
+        else:
+            V[cont] = U[i]
+            cont+=1
+    return V
 	
 def matrizOrtogonal(A,i,j):
     U = identity(len(A))
-    U[i][i] = A[0][0]/(math.sqrt(A[0][0]**2 + A[i][j]**2))
+    U[i][i] = A[0][0]/(sqrt(A[0][0]**2 + A[i][j]**2))
     U[j][j] = U[i][i]
-    U[j][i] = A[i][j]/(math.sqrt(A[0][0]**2 + A[i][j]**2))
+    U[j][i] = A[i][j]/(sqrt(A[0][0]**2 + A[i][j]**2))
     U[i][j] =  -U[j][i]
     return U
 
@@ -36,7 +61,7 @@ def QR(A):
     cont = 0
     tam = len(A)
     while maiorElemento(A) and cont<1000:
-        Q = np.identity(tam)
+        Q = identity(tam)
         for i in range(1,tam):
             for j in range(i):
                 if A[i][j]!=0:
@@ -48,6 +73,3 @@ def QR(A):
        	A = dot(A,Q)
         cont+=1
     return [A[i][i] for i in range(tam)]
-
-
-git
