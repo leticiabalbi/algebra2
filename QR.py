@@ -20,27 +20,27 @@ def LeverrierFaddeev(A):
     return Q[::-1], S
 
 def autoVetores(A,av): #recebe uma matriz e o vetor dos autovalores
-    tam = len(A)
+    tam = len(A) 
     I = identity(tam)
-    U = zeros((tam,tam))
+    U = zeros((tam,tam)) 
     V = zeros((tam,tam))
-    B = LeverrierFaddeev(A)[1]
-    indice = 0
-    cont = 0
-    U[0] = I[indice]
-    for b in range(tam-1):
-        B[b] = B[b].T
+    B = LeverrierFaddeev(A)[1] #Recebe tensor com as matrizes B
+    indice = 0    #indice atual
+    cont = 0		#vezes que vai ser calculado
+    U[0] = I[indice]  #recebe a primeira coluna da identidade
+    for b in range(tam-1):   
+        B[b] = B[b].T			#transpoe matriz
     while cont<tam:
         for i in range(1,tam):
-            U[i] = av[cont] * U[i-1] + B[i-1][indice]
-        if all(U[i]==0):
-            indice += 1
-            U[0] = I[indice]
-            cont = 0
-        else:
-            V[cont] = U[i]
-            cont+=1
-    return V
+            U[i] = av[cont] * U[i-1] + B[i-1][indice]   # recebe o autovetor atual vezes a coluna da identidade + a coluna do vetor B
+        if all(U[i]==0):   #se o vetor for tudo 0
+            indice += 1     #indice incrementa
+            U[0] = I[indice]	#define uma nova coluna da indentidade
+            cont = 0			#refaz os calculos
+        else:				#senao
+            V[cont] = U[i]   #matriz dos autovetores recebe o auto vetor calculado
+            cont+=1  			# continua os calculos para o proximo auto valor
+    return V 
 	
 def matrizOrtogonal(A,i,j):
     U = identity(len(A))
